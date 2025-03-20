@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <style>
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h2>Registration Form</h2>
+
+    <form id="registrationForm">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="mobile">Mobile Number:</label><br>
+        <input type="text" id="mobile" name="mobile" required><br><br>
+
+        <label for="email">Email Address:</label><br>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="address">Address:</label><br>
+        <input type="text" id="address" name="address" required><br><br>
+
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="errorMessages" class="error"></div>
+
+    <script>
+        document.getElementById('registrationForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Get form values
+            const name = document.getElementById('name').value;
+            const mobile = document.getElementById('mobile').value;
+            const email = document.getElementById('email').value;
+            const address = document.getElementById('address').value;
+            const password = document.getElementById('password').value;
+            const errorMessages = document.getElementById('errorMessages');
+            
+            // Clear previous error messages
+            errorMessages.innerHTML = '';
+
+            // Validate Name: No digits allowed
+            const namePattern = /^[A-Za-z\s]+$/;
+            if (!name.match(namePattern)) {
+                errorMessages.innerHTML += 'Name should not contain digits.<br>';
+                return;
+            }
+
+            // Validate Mobile: Must be exactly 10 digits
+            if (mobile.length !== 10) {
+                errorMessages.innerHTML += 'Mobile number must be 10 digits.<br>';
+                return;
+            }
+
+            // Validate Email: Must be a valid email format
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!email.match(emailPattern)) {
+                errorMessages.innerHTML += 'Invalid email format.<br>';
+                return;
+            }
+
+            // Validate Password: Must be at least 6 characters long
+            if (password.length < 6) {
+                errorMessages.innerHTML += 'Password must be at least 6 characters long.<br>';
+                return;
+            }
+
+            // Check if the user already exists in localStorage by mobile number
+            let userData = JSON.parse(localStorage.getItem('userData')) || [];
+            if (userData.some(user => user.mobile === mobile)) {
+                errorMessages.innerHTML += 'User with this mobile number already exists.<br>';
+                return;
+            }
+
+            // Create formData object
+            const formData = {
+                name,
+                mobile,
+                email,
+                address,
+                password
+            };
+
+            // Store new user data in localStorage
+            userData.push(formData);
+            localStorage.setItem('userData', JSON.stringify(userData));
+
+            // Redirect to the page displaying data
+            window.location.href = 'datalist.html';
+        });
+    </script>
+</body>
+</html>
+
